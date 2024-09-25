@@ -1,0 +1,377 @@
+// import {defineStore} from 'pinia'
+// import Cookies from 'js-cookie'
+// import APIs from '~/assets/configurations/API_Config'
+//
+// export const useLoginStore = defineStore('login123', {
+//     state: () => ({
+//         username: '',
+//         password: '',
+//         isLogin: false,
+//     }),
+//     actions: {
+//         login123(user, pass) {
+//             if (user === 'admin' && pass === '123') {
+//                 this.isLogin = true
+//                 console.log('Login successful')
+//             } else {
+//                 console.log('Login failed')
+//             }
+//         },
+//     },
+// })
+//
+// export const state = () => ({
+//     username: {
+//         errors: [],
+//         value: '',
+//     },
+//     password: {
+//         errors: [],
+//         value: '',
+//     },
+//     clientId: null,
+//     path: null,
+//     isLogin: false,
+//     logging: false,
+// })
+//
+// export const mutations = {
+//     setClientId(state, payload) {
+//         state.clientId = payload
+//     },
+//     setUsername(state, payload) {
+//         state.username = {
+//             ...state.username,
+//             value: payload,
+//             errors: [],
+//         }
+//     },
+//     setPath(state, payload) {
+//         state.path = payload
+//     },
+//     setLogging(state, payload) {
+//         state.logging == payload
+//     },
+//     unsetItem(state) {
+//         state.username.value = ''
+//         state.password.value = ''
+//     },
+//     setPassword(state, payload) {
+//         state.password = {
+//             ...state.password,
+//             value: payload,
+//             errors: [],
+//         }
+//     },
+//     usernameHasErrors(state, payload) {
+//         state.username = {
+//             ...state.username,
+//             errors: [payload],
+//         }
+//     },
+//     passwordHasErrors(state, payload) {
+//         state.password = {
+//             ...state.password,
+//             errors: [payload],
+//         }
+//     },
+//     setIsLogin(state, payload) {
+//         state.isLogin = payload
+//     },
+//     clearErrors(state, payload) {
+//         state.username = {
+//             ...state.username,
+//             errors: [],
+//         }
+//         state.password = {
+//             ...state.password,
+//             errors: [],
+//         }
+//     },
+// }
+//
+// export const actions = {
+//     isAuthenticated(vueContext, req) {
+//         if (req) {
+//             let token
+//             try {
+//                 token = req.headers.cookie
+//                     .split(';')
+//                     .find((c) => c.trim().startsWith('token='))
+//                     .split('=')[1]
+//             } catch (e) {
+//                 token = ''
+//             }
+//             return token
+//         } else {
+//             const token =
+//                 Cookies.get('token') !== undefined ? Cookies.get('token') : ''
+//             return token
+//         }
+//     },
+//
+//     setUsername(vueContext, payload) {
+//         vueContext.commit('setUsername', payload)
+//     },
+//
+//     setPassword(vueContext, payload) {
+//         vueContext.commit('setPassword', payload)
+//     },
+//
+//     Submit(vueContext, payload) {
+//         const userName = vueContext.state.username.value
+//         const password = vueContext.state.password.value
+//         const clientId = vueContext.state.clientId
+//         if (userName.indexOf(' ') >= 0) {
+//             vueContext.commit('usernameHasErrors', 'Tên người dùng không hợp lệ.')
+//             vueContext.commit('setLogging', false)
+//             return
+//         }
+//         if (this.$isNullOrEmpty(userName)) {
+//             vueContext.commit('usernameHasErrors', 'Tên người dùng không hợp lệ.')
+//             vueContext.commit('setLogging', false)
+//             return
+//         }
+//         if (this.$isNullOrEmpty(password)) {
+//             vueContext.commit(
+//                 'passwordHasErrors',
+//                 'Tài khoản người dùng hoặc mật khẩu không hợp lệ'
+//             )
+//             vueContext.commit('setLogging', false)
+//             return
+//         }
+//         vueContext.commit('clearErrors')
+//         this.$login123({
+//             userName,
+//             password,
+//             clientId,
+//         })
+//             .then((response) => {
+//                 let errorCode = response.data.error.code
+//                 let data = response.data.data
+//
+//                 if (errorCode === APIs.responses.OK.code) {
+//                     vueContext.commit('setIsLogin', true)
+//                     Cookies.set('token', data.token)
+//                     Cookies.set('username', data.user.userName)
+//                     Cookies.set('customerId', data.user.customerId)
+//                     Cookies.set('userId', data.user.id)
+//                     // Cookies.set('employeeID', data.user.employeeId)
+//                     if (!this.$isNullOrEmpty(data.user.fullName)) {
+//                         Cookies.set('fullname', data.user.fullName)
+//                     } else {
+//                         Cookies.set('fullname', '')
+//                     }
+//
+//                     let listGroups = []
+//                     for (let i = 0; i < response.data.data.groups.length; i++) {
+//                         listGroups.push(response.data.data.groups[i].groupName)
+//                     }
+//                     let strGroup = ',' + listGroups.toString() + ','
+//                     Cookies.set('strListGroup', strGroup)
+//
+//                     if (data.token !== null) {
+//                         vueContext.commit('unsetItem')
+//                         this.$router.push('/')
+//                     }
+//                 } else if (
+//                     errorCode === APIs.login123.responses.CREDENTIALS_INVALID.code
+//                 ) {
+//                     // Wrong credentials
+//                     vueContext.commit(
+//                         'usernameHasErrors',
+//                         'Tài khoản người dùng hoặc mật khẩu không hợp lệ'
+//                     )
+//                     vueContext.commit(
+//                         'passwordHasErrors',
+//                         'Tài khoản người dùng hoặc mật khẩu không hợp lệ'
+//                     )
+//                 }
+//                 vueContext.commit('setLogging', false)
+//             })
+//             .catch((errors) => {
+//                 vueContext.commit('setLogging', false)
+//             })
+//     },
+// }
+//
+// export const getters = {}
+//
+//
+
+
+import {defineStore} from 'pinia'
+import Cookies from 'js-cookie'
+import APIs from '~/assets/configurations/API_Config'
+
+export const useLoginStore = defineStore('login', {
+    state: () => ({
+        username: {
+            errors: [],
+            value: '',
+        },
+        password: {
+            errors: [],
+            value: '',
+        },
+        captchaCode: '',
+        clientId: null,
+        path: null,
+        isLogin: false,
+        logging: false,
+    }),
+
+    actions: {
+        createCaptcha() {
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+            let captcha = ''
+            for (let i = 0; i < 6; i++) {
+                captcha += characters.charAt(Math.floor(Math.random() * characters.length))
+            }
+            this.captchaCode = captcha
+            return captcha.split('')
+        },
+
+        setClientId(payload) {
+            this.clientId = payload
+        },
+
+        setUsername(payload) {
+            this.username = {
+                ...this.username,
+                value: payload,
+                errors: [],
+            }
+        },
+
+        setPassword(payload) {
+            this.password = {
+                ...this.password,
+                value: payload,
+                errors: [],
+            }
+        },
+
+        setPath(payload) {
+            this.path = payload
+        },
+
+        setLogging(payload) {
+            this.logging = payload
+        },
+
+        unsetItem() {
+            this.username.value = ''
+            this.password.value = ''
+        },
+
+        usernameHasErrors(payload) {
+            this.username = {
+                ...this.username,
+                errors: [payload],
+            }
+        },
+
+        passwordHasErrors(payload) {
+            this.password = {
+                ...this.password,
+                errors: [payload],
+            }
+        },
+
+        setIsLogin(payload) {
+            this.isLogin = payload
+        },
+
+        clearErrors() {
+            this.username = {
+                ...this.username,
+                errors: [],
+            }
+            this.password = {
+                ...this.password,
+                errors: [],
+            }
+        },
+
+        isAuthenticated(req) {
+            if (req) {
+                let token
+                try {
+                    token = req.headers.cookie
+                        .split(';')
+                        .find((c) => c.trim().startsWith('token='))
+                        .split('=')[1]
+                } catch (e) {
+                    token = ''
+                }
+                return token
+            } else {
+                const token = Cookies.get('token') !== undefined ? Cookies.get('token') : ''
+                return token
+            }
+        },
+
+        async submit() {
+            const userName = this.username.value
+            const password = this.password.value
+            const clientId = this.clientId
+            console.warn(userName);
+            console.warn(password);
+            if (userName.indexOf(' ') >= 0) {
+                this.usernameHasErrors('Tên người dùng không hợp lệ.')
+                this.setLogging(false)
+                return
+            }
+            if (!userName) {
+                this.usernameHasErrors('Tên người dùng không hợp lệ.')
+                this.setLogging(false)
+                return
+            }
+            if (!password) {
+                this.passwordHasErrors('Tài khoản người dùng hoặc mật khẩu không hợp lệ')
+                this.setLogging(false)
+                return
+            }
+
+            this.clearErrors()
+
+            try {
+                const response = await this.$login({
+                    userName,
+                    password,
+                    clientId,
+                })
+
+                const errorCode = response.data.error.code
+                const data = response.data.data
+
+                if (errorCode === APIs.responses.OK.code) {
+                    this.setIsLogin(true)
+                    Cookies.set('token', data.token)
+                    Cookies.set('username', data.user.userName)
+                    Cookies.set('customerId', data.user.customerId)
+                    Cookies.set('userId', data.user.id)
+
+                    Cookies.set('fullname', data.user.fullName || '')
+
+                    const listGroups = data.groups.map((group) => group.groupName)
+                    const strGroup = ',' + listGroups.toString() + ','
+                    Cookies.set('strListGroup', strGroup)
+
+                    if (data.token !== null) {
+                        this.unsetItem()
+                        this.$router.push('/')
+                    }
+                } else if (errorCode === APIs.login.responses.CREDENTIALS_INVALID.code) {
+                    this.usernameHasErrors('Tài khoản người dùng hoặc mật khẩu không hợp lệ')
+                    this.passwordHasErrors('Tài khoản người dùng hoặc mật khẩu không hợp lệ')
+                }
+
+                this.setLogging(false)
+            } catch (errors) {
+                this.setLogging(false)
+            }
+        },
+    },
+})
