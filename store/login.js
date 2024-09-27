@@ -1,7 +1,7 @@
 import {defineStore} from 'pinia';
 import Cookies from 'js-cookie';
 import APIs from '~/assets/configurations/API_Config';
-
+import uniqid from 'uniqid';
 export const useLoginStore = defineStore('login', {
     state: () => ({
         username: {
@@ -19,17 +19,17 @@ export const useLoginStore = defineStore('login', {
     }),
 
     actions: {
-        async login({ commit }, { userName, password }) {
+        async login({commit}, {userName, password}) {
             const channel = APIs.channel; // Lấy channel từ cấu hình API
             let transid = uniqid(); // Tạo ID giao dịch duy nhất
-
+            console.log( 'transid',transid);
             try {
                 const response = await this.$axios({
-                    url: 'https://core-dev.vtvtravel.vn/sys/v1/tourism/admin',
-                    method: APIs.login.method,
+                    url: 'https://core-dev.vtvtravel.vn/sys/v1/tourism/admin/user/login',
+                    method: 'POST',
                     data: {
-                        // channel,
-                        // transid,
+                        channel,
+                        transid,
                         userName,
                         password,
                     },
@@ -79,8 +79,8 @@ export const useLoginStore = defineStore('login', {
         async submit() {
             const userName = this.username.value;
             const password = this.password.value;
-            // const clientId = this.clientId;
-            // console.log(userName, password, clientId);
+            const clientId = this.clientId;
+            console.log(userName, password, clientId);
 
             if (userName.indexOf(' ') >= 0) {
                 this.username.errors = ['Tên người dùng không hợp lệ.'];
@@ -99,10 +99,10 @@ export const useLoginStore = defineStore('login', {
             // this.password.errors = [];
 
             try {
-                const response = await this.$login({
+                const response = await this.login({
                     userName,
                     password,
-                    // clientId,
+                    clientId,
                 });
                 // console.log(1);
                 console.log(response);
@@ -137,7 +137,7 @@ export const useLoginStore = defineStore('login', {
 
                 this.logging = false;
             } catch (errors) {
-                console.log('Lỗi call api');
+                console.log('Lỗi call api', errors);
 
                 this.logging = false;
             }

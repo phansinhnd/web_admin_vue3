@@ -18,13 +18,6 @@
 
 <script setup>
 
-export default {
-  // name: 'login',
-  mounted() {
-    // Set the current viewport (To check client device using viewport)
-  },
-  methods: {},
-}
 </script>
 
 <style scoped>

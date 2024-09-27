@@ -325,59 +325,105 @@
 //         return response
 //     })
 // }
+// import APIs from '~/assets/configurations/API_Config'
+// import uniqid from 'uniqid'
+// import Cookies from 'js-cookie'
+//
+// export default {
+//     install(app) {
+//         const channel = APIs.channel
+//
+//         app.config.globalProperties.$login = async ({ userName, password }) => {
+//             let transid = uniqid()
+//             const response = await app.config.globalProperties.$axios({
+//                 url: APIs.login.url,
+//                 method: APIs.login.method,
+//                 data: {
+//                     channel,
+//                     transid,
+//                     userName,
+//                     password,
+//                 },
+//             })
+//             return response
+//         }
+//
+//         app.config.globalProperties.$getRoleByUser = async (payload) => {
+//             let transid = uniqid()
+//             const response = await app.config.globalProperties.$axios({
+//                 url: APIs.getRoleByUser.url,
+//                 method: APIs.getRoleByUser.method,
+//                 headers: {
+//                     Authorization: Cookies.get('token') ? `Bearer ${Cookies.get('token')}` : '',
+//                 },
+//                 params: {
+//                     channel,
+//                     transid,
+//                     ...payload,
+//                 },
+//             })
+//             return response
+//         }
+//
+//         // Similarly refactor the other injections
+//         // Example for 'getListSchedule':
+//         app.config.globalProperties.$getListSchedule = async () => {
+//             let transid = uniqid()
+//             const response = await app.config.globalProperties.$axios({
+//                 url: APIs.getListSchedule.url,
+//                 method: APIs.getListSchedule.method,
+//                 headers: {
+//                     Authorization: `Bearer ${Cookies.get('token')}`,
+//                 },
+//             })
+//             return response
+//         }
+//
+//         // Add remaining injections like $getListUsers, $updateUser, etc.
+//     }
+// }
+
+import { v4 as uuidv4 } from 'uuid'
 import APIs from '~/assets/configurations/API_Config'
 import Cookies from 'js-cookie'
 
-export default {
-    install(app) {
-        const channel = APIs.channel
+// Inject APIs
+export default (context, inject) => {
+    const channel = APIs.channel
 
-        app.config.globalProperties.$login = async ({ userName, password }) => {
-            let transid = uniqid()
-            const response = await app.config.globalProperties.$axios({
-                url: APIs.login.url,
-                method: APIs.login.method,
-                data: {
-                    channel,
-                    transid,
-                    userName,
-                    password,
-                },
-            })
-            return response
-        }
+    inject('login', async ({ userName, password }) => {
+        let transid = uuidv4()  // Sử dụng uuidv4 thay cho uniqid
+        const response = await context.app.$axios({
+            url: APIs.login.url,
+            method: APIs.login.method,
+            data: {
+                channel,
+                transid,
+                userName,
+                password,
+            },
+        })
+        return response
+    })
 
-        app.config.globalProperties.$getRoleByUser = async (payload) => {
-            let transid = uniqid()
-            const response = await app.config.globalProperties.$axios({
-                url: APIs.getRoleByUser.url,
-                method: APIs.getRoleByUser.method,
-                headers: {
-                    Authorization: Cookies.get('token') ? `Bearer ${Cookies.get('token')}` : '',
-                },
-                params: {
-                    channel,
-                    transid,
-                    ...payload,
-                },
-            })
-            return response
-        }
+    inject('getRoleByUser', async (payload) => {
+        let transid = uuidv4()  // Sử dụng uuidv4 thay cho uniqid
+        const response = await context.app.$axios({
+            url: APIs.getRoleByUser.url,
+            method: APIs.getRoleByUser.method,
+            headers: {
+                Authorization: Cookies.get('token')
+                    ? `Bearer ${Cookies.get('token')}`
+                    : '',
+            },
+            params: {
+                channel,
+                transid,
+                ...payload,
+            },
+        })
+        return response
+    })
 
-        // Similarly refactor the other injections
-        // Example for 'getListSchedule':
-        app.config.globalProperties.$getListSchedule = async () => {
-            let transid = uniqid()
-            const response = await app.config.globalProperties.$axios({
-                url: APIs.getListSchedule.url,
-                method: APIs.getListSchedule.method,
-                headers: {
-                    Authorization: `Bearer ${Cookies.get('token')}`,
-                },
-            })
-            return response
-        }
-
-        // Add remaining injections like $getListUsers, $updateUser, etc.
-    }
+    // Các hàm khác bạn cũng thay `uniqid()` thành `uuidv4()`
 }

@@ -346,6 +346,57 @@ import Cookies from 'js-cookie'
 // import Cookies from 'js-cookie';
 
 export default defineNuxtPlugin((nuxtApp) => {
+    nuxtApp.provide('showErrorNotify', (app, errors, text) => {
+        nuxtApp.$showLogError(errors, text);
+        nuxtApp.$showNotify(app, 'error', text);
+    });
+
+    // Hiển thị thông báo lỗi
+    nuxtApp.provide('showError', (app, text) => {
+        nuxtApp.$showNotify(app, 'error', text);
+    });
+
+    // Hiển thị thông báo thành công
+    nuxtApp.provide('showSuccess', (app, text) => {
+        nuxtApp.$showNotify(app, 'successNotify', text);
+    });
+
+    // Hiển thị thông báo với REST
+    nuxtApp.provide('showNotifyRest', (app, text) => {
+        nuxtApp.store.dispatch('notification/set_notifications', {
+            color: 'successNotify',
+            text: text,
+        });
+    });
+
+    // Show log lỗi (Deprecated, không dùng)
+    nuxtApp.provide('showLogError', (errors, text) => {
+        let response = errors.response;
+        let request = errors.request;
+        console.error('Log error:', { errors, response, request });
+    });
+
+    // Log dữ liệu (Deprecated)
+    nuxtApp.provide('showLog', (text, res = null) => {
+        console.log('Log:', text, res);
+    });
+
+    // Hiển thị thông báo
+    nuxtApp.provide('showNotify', (app, type, text) => {
+        app.$notify({
+            group: 'main',
+            type: type,
+            text: text,
+            // duration: 5000,
+            // position: 'top right'
+        });
+    });
+
+    // Hiển thị cảnh báo
+    nuxtApp.provide('showWarnNotify', (app, text) => {
+        nuxtApp.$showNotify(app, 'warn', text);
+    });
+
     nuxtApp.provide('createCaptcha', () => {
         window.document.getElementById('captchaInput').innerHTML = '';
         let charsArray = 'abcdefghijklmnpqrstuvwxyz123456789ABCDEFGHIJKLMNPQRSTUVWXYZ';

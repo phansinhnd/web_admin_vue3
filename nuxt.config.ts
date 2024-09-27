@@ -13,6 +13,7 @@ export default defineNuxtConfig({
         },
     },
     css: [
+        '@/assets/fonts/iconQLBCDP/style.css',
         'vuetify/styles',
         '@mdi/font/css/materialdesignicons.min.css',
         '~/assets/scss/main.scss'
@@ -26,6 +27,9 @@ export default defineNuxtConfig({
         },
     },
     plugins: [
-        { src: '~/plugins/vue-toastification.js', mode: 'client' }
+        { src: '~/plugins/vue-toastification.js', mode: 'client' },
+        '~/plugins/axios.js',
+        '~/plugins/ult.js',
+        '~/plugins/ultilities.js',
     ],
 })
