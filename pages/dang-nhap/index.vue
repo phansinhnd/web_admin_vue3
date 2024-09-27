@@ -1,39 +1,42 @@
 <template>
   <v-container class="pa-0 height-100vh container-login" fluid>
-    <v-row align="center" justify="center" class="align-self-center pa-0 height-100vh container-login-row">
+    <v-row
+      align="center"
+      justify="center"
+      class="align-self-center pa-0 height-100vh container-login-row"
+    >
       <v-col cols="12" class="col-login pa-0">
         <v-card class="bg-transparent card-login" flat>
           <h1 class="text-heading text-shadow-primary">SmartTravelAdmin</h1>
           <v-card-text class="bg-transparent card-login-text">
             <form @submit.prevent="submit">
               <v-text-field
-                  class="input-email"
-                  v-model="username"
-                  :error-messages="usernameErrors"
-                  label="Email"
+                class="input-email"
+                v-model="username"
+                :error-messages="usernameErrors"
+                label="Email"
               ></v-text-field>
 
               <v-text-field
-                  class="input-password"
-                  id="password"
-                  label="Password"
-                  :append-icon="showPass ? 'mdi-eye' : 'mdi-eye-off'"
-                  name="password"
-                  v-model="password"
-                  :type="showPass ? 'text' : 'password'"
-                  :error-messages="passwordErrors"
-                  @click:append="showPass = !showPass"
+                class="input-password"
+                id="password"
+                label="Password"
+                :append-icon="showPass ? 'mdi-eye' : 'mdi-eye-off'"
+                name="password"
+                v-model="password"
+                :type="showPass ? 'text' : 'password'"
+                :error-messages="passwordErrors"
+                @click:append="showPass = !showPass"
               ></v-text-field>
-
 
               <div class="d-flex justify-center">
                 <v-btn
-                    class="btn-submit"
-                    v-ripple
-                    type="submit"
-                    block
-                    :loading="loadingLogin"
-                >Đăng nhập
+                  class="btn-submit"
+                  v-ripple
+                  type="submit"
+                  block
+                  :loading="loadingLogin"
+                  >Đăng nhập
                 </v-btn>
               </div>
             </form>
@@ -45,15 +48,19 @@
 </template>
 
 <script>
-import {ref, computed, onMounted} from 'vue';
-import {useLoginStore} from '~/store/login';
-import {useAppStore} from '~/store/app';
+import { ref, computed, onMounted } from "vue";
+import { useLoginStore } from "~/store/login";
+import { useAppStore } from "~/store/app";
 
 definePageMeta({
-  layout: ' login'
-})
+  layout: " login",
+});
 export default {
   setup() {
+    // const username = ref("");
+    // console.log("username", username);
+
+    // const password = ref("");
     const store = useLoginStore();
     const appStore = useAppStore();
     const showPass = ref(false);
@@ -64,7 +71,9 @@ export default {
 
     const username = computed({
       get: () => store.username.value,
-      set: (value) => store.setUsername(value),
+      set: (value) => {
+        store.setUsername(value);
+      },
     });
 
     const password = computed({
@@ -74,10 +83,11 @@ export default {
 
     const submit = () => {
       loadingLogin.value = true;
-      store.submit() // Gọi action Submit trong store
-          .finally(() => {
-            loadingLogin.value = false;
-          });
+      store
+        .submit(username.value, password) // Gọi action Submit trong store
+        .finally(() => {
+          loadingLogin.value = false;
+        });
     };
 
     onMounted(() => {
@@ -97,7 +107,6 @@ export default {
     };
   },
 };
-
 </script>
 <style>
 /*Begin: common*/
@@ -106,7 +115,8 @@ export default {
 }
 
 .text-shadow-primary {
-  text-shadow: 0px 1px 0 rgba(0, 0, 0, 1), 0px -1px 0 rgba(0, 0, 0, 1), 1px 0px 0 rgba(0, 0, 0, 1), -1px 0px 0 rgba(0, 0, 0, 1);
+  text-shadow: 0px 1px 0 rgba(0, 0, 0, 1), 0px -1px 0 rgba(0, 0, 0, 1),
+    1px 0px 0 rgba(0, 0, 0, 1), -1px 0px 0 rgba(0, 0, 0, 1);
 }
 
 .bg-transparent {
@@ -138,7 +148,7 @@ export default {
 .input-password .v-field__field {
   background: white;
   border-radius: 6px;
-  border: 1px solid #EBEBEB;
+  border: 1px solid #ebebeb;
   box-shadow: 0px 4px 12px 0px #00000026;
   font-size: 14px;
   font-weight: 400;
@@ -146,7 +156,12 @@ export default {
 }
 
 .container-login {
-  background-image: linear-gradient(to bottom, rgba(0, 0, 0, .6), rgba(0, 0, 0, .1)), url("/images/bg-logo.jpg");
+  background-image: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.6),
+      rgba(0, 0, 0, 0.1)
+    ),
+    url("/images/bg-logo.jpg");
   background-size: cover;
 }
 
@@ -158,8 +173,7 @@ export default {
   font-weight: 400;
   line-height: 24px;
   letter-spacing: 1.5px;
-  color: #FFFFFF;
-
+  color: #ffffff;
 }
 
 .v-messages__message {
@@ -168,7 +182,8 @@ export default {
   margin-bottom: 10px;
   line-height: 1.4;
   /*color: white;*/
-  text-shadow: 0px 1px 0 #f05123, 0px -1px 0 #f05123, 1px 0px 0 #f05123, -1px 0px 0 #f05123;
+  text-shadow: 0px 1px 0 #f05123, 0px -1px 0 #f05123, 1px 0px 0 #f05123,
+    -1px 0px 0 #f05123;
 }
 
 .v-field__outline {
@@ -193,6 +208,6 @@ export default {
   line-height: 16px;
   letter-spacing: 1.25px;
   color: white;
-  background: #0078FF;;
+  background: #0078ff;
 }
 </style>
